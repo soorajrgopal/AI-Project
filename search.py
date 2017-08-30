@@ -102,10 +102,9 @@ def depthFirstSearch(problem):
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
 
-    visited = []
     startState = problem.getStartState()
+    visited = [startState]
     from util import Queue
     q = Queue()
     q.push((startState,[]))
@@ -113,10 +112,10 @@ def breadthFirstSearch(problem):
         (currentState, direction) = q.pop()
         if problem.isGoalState(currentState):
             return direction
-        visited.append(currentState)
         for succ, dirc, cost in problem.getSuccessors(currentState): 
             if succ not in visited:
                 q.push((succ, direction + [dirc]))
+                visited.append(succ)
 
     return []
    

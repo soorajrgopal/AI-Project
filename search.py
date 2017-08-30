@@ -112,13 +112,12 @@ def breadthFirstSearch(problem):
     q.push((startState,[]))
     while not q.isEmpty():
         (currentState, direction) = q.pop()
+        if problem.isGoalState(currentState):
+            return direction
         visited.append(currentState)
         for succ, dirc, cost in problem.getSuccessors(currentState): 
             if succ not in visited:
-                if problem.isGoalState(succ):
-                    return direction + [dirc]
-                else:
-                    q.push((succ, direction + [dirc]))
+                q.push((succ, direction + [dirc]))
 
     return []
    

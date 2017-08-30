@@ -104,37 +104,23 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    
-    path = []
-    startState = problem.getStartState()
-    visited = [startState]
-    if problem.isGoalState(startState):
-        return []
 
-    action = {startState:None}
-    parent = {startState:None}
+    visited = []
+    startState = problem.getStartState()
     from util import Queue
     q = Queue()
-    q.push(startState)
-
+    q.push((startState,[]))
     while not q.isEmpty():
-        currentState = q.pop()
-        if problem.isGoalState(currentState):
-            goalState = currentState
-            break
-        succList = problem.getSuccessors(currentState)
-        for succ, direction, cost in problem.getSuccessors(currentState): 
-            if not succ in visited:
-                visited.append(succ)
-                q.push(succ)
-                parent[succ] = currentState
-                action[succ] = direction
+        (currentState, direction) = q.pop()
+        visited.append(currentState)
+        for succ, dirc, cost in problem.getSuccessors(currentState): 
+            if succ not in visited:
+                if problem.isGoalState(succ):
+                    return direction + [dirc]
+                else:
+                    q.push((succ, direction + [dirc]))
 
-    travState = goalState
-    while not parent[travState] == None:
-        path.insert(0, action[travState])
-        travState = parent[travState]
-    return path
+    return []
    
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""

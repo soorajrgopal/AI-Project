@@ -18,6 +18,7 @@ Pacman agents (in searchAgents.py).
 """
 
 import util
+import searchAgents
 
 class SearchProblem:
     """
@@ -155,8 +156,33 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    directions = []
+    startState = problem.getStartState()
+    visited = [startState]
+    q = util.PriorityQueue()  #same as bfs but use priority queue
+    q.push(startState, 0)
+    predMap = {startState:(None,None,0)} # key is state, value is a tuple (parent, action, cost)
+    while not q.isEmpty():
+        currentState = q.pop()
+        (parent, direction, currCost) = predMap[currentState]
+        visited.append(currentState)
+        if problem.isGoalState(currentState):
+            while parent:
+                directions.insert(0, direction)
+                (parent, direction, currCost) = predMap[parent]
+            return directions
+        for succ, direction, cost in problem.getSuccessors(currentState):
+            if succ not in visited:
+                newCost = cost + currCost + heuristic(succ,problem)
+                q.update(succ, newCost)
+                if succ in predMap:
+                    (succParent, succDir, succCost) = predMap[succ]
+                    if succCost + heuristic(succ,problem) > newCost:
+                        predMap[succ] = (currentState, direction, cost + currCost)
+                else:
+                    predMap[succ] = (currentState, direction, cost + currCost)
+            
+    return []
 
 
 # Abbreviations

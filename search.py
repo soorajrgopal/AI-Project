@@ -123,8 +123,8 @@ def uniformCostSearch(problem):
 
     startState = problem.getStartState()
     visited = [startState]
-    q = util.PriorityQueue()
-    q.push((startState,[], 0), 0)
+    q = util.PriorityQueue()  #same as bfs but use priority queue
+    q.push((startState,[], 0), 0) # pushing directions and cost along with state. should change this
     while not q.isEmpty():
         (currentState, directions, currCost) = q.pop()
         visited.append(currentState)
@@ -132,6 +132,7 @@ def uniformCostSearch(problem):
             return directions
         for succ, direction, cost in problem.getSuccessors(currentState): 
             if succ not in visited:
+                # cost+currCost = cost so far. new priority is updated only if value is greater..
                 q.update((succ, directions + [direction], cost+currCost), cost+currCost)
     return []
 

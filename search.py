@@ -111,13 +111,17 @@ def breadthFirstSearch(problem):
     q.push((startState,[]))
     while not q.isEmpty():
         (currentState, direction) = q.pop()
-        if problem.isGoalState(currentState):
+        if problem.isGoalState(currentState) == 'Intermediate':
+            while not q.isEmpty():
+                q.pop()
+                visited = [currentState]
+        elif problem.isGoalState(currentState):
             return direction
         for succ, dirc, cost in problem.getSuccessors(currentState): 
             if succ not in visited:
                 q.push((succ, direction + [dirc]))
                 visited.append(succ)
-    return []
+    return direction
    
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""

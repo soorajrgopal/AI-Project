@@ -303,11 +303,13 @@ class CornersProblem(search.SearchProblem):
         """
         if state in self.corners:
             if state not in self.visited:
-                self.visited.append(state)
-                if len(self.visited) == len(self.corners):
+                if len(self.visited)+1 == len(self.corners):
                     return True
-                else:                                                
-                    return 'Intermediate'
+                else:
+                    if state == self.cornersPrio[0]:
+                        self.cornersPrio = self.cornersPrio[1:]
+                        self.visited.append(state)
+                        return 'Intermediate'                        
         return False
 
     def getSuccessors(self, state):

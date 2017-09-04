@@ -183,6 +183,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     while not q.isEmpty():
         currentState = q.pop()
         (parent, direction, currCost) = predMap[currentState]
+        directions += [direction]
         visited.append(currentState)
         isGoal = problem.isGoalState(currentState)
         if isGoal == 'Intermediate':
@@ -190,9 +191,12 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 q.pop()
             visited = []
         elif isGoal:
+            print 'directions before ', directions
+            directions = []
             while parent:
                 directions.insert(0, direction)
                 (parent, direction, currCost) = predMap[parent]
+            #print predMap
             return directions
         '''
         if problem.isGoalState(currentState):

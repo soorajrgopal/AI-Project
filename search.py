@@ -137,11 +137,23 @@ def uniformCostSearch(problem):
         currentState = q.pop()
         (parent, direction, currCost) = predMap[currentState]
         visited.append(currentState)
+        isGoal = problem.isGoalState(currentState)
+        if isGoal == 'Intermediate':
+            while not q.isEmpty():
+                q.pop()
+            visited = []
+        elif isGoal:
+            while parent:
+                directions.insert(0, direction)
+                (parent, direction, currCost) = predMap[parent]
+            return directions
+        '''
         if problem.isGoalState(currentState):
             while parent:
                 directions.insert(0, direction)
                 (parent, direction, currCost) = predMap[parent]
             return directions
+        '''
         for succ, direction, cost in problem.getSuccessors(currentState): 
             if succ not in visited:
                 q.update(succ, cost+currCost)
@@ -172,11 +184,23 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         currentState = q.pop()
         (parent, direction, currCost) = predMap[currentState]
         visited.append(currentState)
+        isGoal = problem.isGoalState(currentState)
+        if isGoal == 'Intermediate':
+            while not q.isEmpty():
+                q.pop()
+            visited = []
+        elif isGoal:
+            while parent:
+                directions.insert(0, direction)
+                (parent, direction, currCost) = predMap[parent]
+            return directions
+        '''
         if problem.isGoalState(currentState):
             while parent:
                 directions.insert(0, direction)
                 (parent, direction, currCost) = predMap[parent]
             return directions
+        '''
         for succ, direction, cost in problem.getSuccessors(currentState):
             if succ not in visited:
                 newCost = cost + currCost + heuristic(succ,problem)
@@ -187,7 +211,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                         predMap[succ] = (currentState, direction, cost + currCost)
                 else:
                     predMap[succ] = (currentState, direction, cost + currCost)
-            
     return []
 
 

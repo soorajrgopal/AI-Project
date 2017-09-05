@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -101,30 +101,21 @@ def depthFirstSearch(problem):
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
-    """Search the shallowest nodes in the search tree first."""
+    visited=[]
+    queue=util.Queue()
+    queue.push((problem.getStartState(), []))
+    while not queue.isEmpty():
+        state, moves = queue.pop()
+        if state in visited:
+        	continue
+        visited.append(state)
+        if problem.isGoalState(state):
+        	return moves
+    	for successor, action, cost in problem.getSuccessors(state):
+    		if successor not in visited:
+    			queue.push((successor,moves+[action]))
+    return []
 
-    startState = problem.getStartState()
-    visited = [startState]
-    from util import Queue
-    q = Queue()
-    q.push((startState,[]))
-    while not q.isEmpty():
-        (currentState, direction) = q.pop()
-        isGoal = problem.isGoalState(currentState)
-        if isGoal == 'Intermediate':
-            #print 'intr ', currentState
-            while not q.isEmpty():
-                q.pop()
-            visited = []
-        elif isGoal:
-            #print 'goal'
-            return direction
-        for succ, dirc, cost in problem.getSuccessors(currentState): 
-            if succ not in visited:
-                q.push((succ, direction + [dirc]))
-                visited.append(succ)
-    return direction
-   
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     directions = []
@@ -142,15 +133,15 @@ def uniformCostSearch(problem):
                 directions.insert(0, direction)
                 (parent, direction, currCost) = predMap[parent]
             return directions
-        for succ, direction, cost in problem.getSuccessors(currentState): 
+        for succ, direction, cost in problem.getSuccessors(currentState):
             if succ not in visited:
                 q.update(succ, cost+currCost)
                 if succ in predMap:
                     succParent, succDir, succCost = predMap[succ]
                     if succCost > cost+currCost:
-                       predMap[succ] = (currentState, direction, cost+currCost)                        
+                       predMap[succ] = (currentState, direction, cost+currCost)
                 else:
-                    predMap[succ] = (currentState, direction, cost+currCost) 
+                    predMap[succ] = (currentState, direction, cost+currCost)
     return []
 
 def nullHeuristic(state, problem=None):
@@ -187,7 +178,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                         predMap[succ] = (currentState, direction, cost + currCost)
                 else:
                     predMap[succ] = (currentState, direction, cost + currCost)
-            
+
     return []
 
 

@@ -4,7 +4,7 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
@@ -288,53 +288,37 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         self.visited=[]
-        self.cornersPrio = [(1,1), (1,top), (right, top), (right, 1)]
-        
+
     def getStartState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        return self.startingPosition
+        return (self.startingPosition, [])
 
-    def isGoalState(self, state):
+    def isGoalState(self, newState):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        if state in self.corners:
-            if state not in self.visited:
-                if len(self.visited)+1 == len(self.corners):
-                    return True
-                else:
-                    if state == self.cornersPrio[0]:
-                        self.cornersPrio = self.cornersPrio[1:]
-                        self.visited.append(state)
-                        return 'Intermediate'                        
-        return False
+        state, visitedCorners = newState
+        if state in self.corners and state not in visitedCorners:
+            visitedCorners.append(state)
+        return len(visitedCorners) == len(self.corners)
 
-    def getSuccessors(self, state):
-        """
-        Returns successor states, the actions they require, and a cost of 1.
-
-         As noted in search.py:
-            For a given state, this should return a list of triples, (successor,
-            action, stepCost), where 'successor' is a successor to the current
-            state, 'action' is the action required to get there, and 'stepCost'
-            is the incremental cost of expanding to that successor
-        """
-
+    def getSuccessors(self, newState):
         successors = []
-        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
-            # Add a successor state to the successor list if the action is legal
-            # Here's a code snippet for figuring out whether a new position hits a wall:
-            x,y = state
-            dx, dy = Actions.directionToVector(action)
-            nextx, nexty = int(x + dx), int(y + dy)
-            if not self.walls[nextx][nexty]:
-                nextState = (nextx, nexty)
-                cost = 1 #self.costFn(nextState)
-                successors.append((nextState, action, cost))
-
+        state, visitedCorners = newState
+        x,y =  state
+        for move in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+            dx, dy = Actions.directionToVector(move)
+            if not self.walls[int(x + dx)][int(y + dy)]:
+                # creating a new list here to make it a new state
+                newVisitedCorners = list(visitedCorners)
+                valid_succ_state = (int(x + dx), int(y + dy))
+                if valid_succ_state in self.corners and valid_succ_state not in visitedCorners:
+                    newVisitedCorners.append(valid_succ_state)
+                successor = ((valid_succ_state, newVisitedCorners), move, 1)
+                successors.append(successor)
         self._expanded += 1 # DO NOT CHANGE
         return successors
 

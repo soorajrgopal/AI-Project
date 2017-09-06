@@ -153,32 +153,39 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    directions = []
+    nodeMaps,visited=[],[]
     startState = problem.getStartState()
-    visited = [startState]
     q = util.PriorityQueue()  #same as bfs but use priority queue
     q.push(startState, 0)
-    predMap = {startState:(None,None,0)} # key is state, value is a tuple (parent, action, cost)
+    startNode = {'node':startState,'direction':[],'cost':0}
+    nodeMaps.append(startNode)
     while not q.isEmpty():
         currentState = q.pop()
-        (parent, direction, currCost) = predMap[currentState]
-        visited.append(currentState)
         if problem.isGoalState(currentState):
-            while parent:
-                directions.insert(0, direction)
-                (parent, direction, currCost) = predMap[parent]
-            return directions
+            for nodeMap in nodeMaps:
+                if nodeMap['node']==currentState:
+                    return nodeMap['direction']
+        visited += [currentState]
+        currCost,currDir=0,[]
+        for nodeMap in nodeMaps:
+            if nodeMap['node']==currentState:
+                currCost, currDir = nodeMap['cost'], nodeMap['direction']
         for succ, direction, cost in problem.getSuccessors(currentState):
             if succ not in visited:
+                succNode = {'node':succ,'direction':currDir+[direction],'cost':cost + currCost}
                 newCost = cost + currCost + heuristic(succ,problem)
                 q.update(succ, newCost)
-                if succ in predMap:
-                    (succParent, succDir, succCost) = predMap[succ]
-                    if succCost + heuristic(succ,problem) > newCost:
-                        predMap[succ] = (currentState, direction, cost + currCost)
-                else:
-                    predMap[succ] = (currentState, direction, cost + currCost)
-
+                found,updateNode = False,None
+                for nodeMap in nodeMaps:
+                    if nodeMap['node']==succ:
+                        found=True
+                        if nodeMap['cost']+heuristic(succ,problem)>newCost:
+                            updateNode=nodeMap
+                if updateNode:
+                    nodeMaps.remove(updateNode)
+                    nodeMaps.append(succNode)
+                if not found:
+                    nodeMaps.append(succNode)
     return []
 
 

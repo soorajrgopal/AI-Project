@@ -153,40 +153,28 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    nodeMaps,visited=[],[]
-    startState = problem.getStartState()
-    q = util.PriorityQueue()  #same as bfs but use priority queue
-    q.push(startState, 0)
-    startNode = {'node':startState,'direction':[],'cost':0}
-    nodeMaps.append(startNode)
-    while not q.isEmpty():
-        currentState = q.pop()
-        if problem.isGoalState(currentState):
-            for nodeMap in nodeMaps:
-                if nodeMap['node']==currentState:
-                    return nodeMap['direction']
-        visited += [currentState]
-        currCost,currDir=0,[]
-        for nodeMap in nodeMaps:
-            if nodeMap['node']==currentState:
-                currCost, currDir = nodeMap['cost'], nodeMap['direction']
-        for succ, direction, cost in problem.getSuccessors(currentState):
-            if succ not in visited:
-                succNode = {'node':succ,'direction':currDir+[direction],'cost':cost + currCost}
-                newCost = cost + currCost + heuristic(succ,problem)
-                q.update(succ, newCost)
-                found,updateNode = False,None
-                for nodeMap in nodeMaps:
-                    if nodeMap['node']==succ:
-                        found=True
-                        if nodeMap['cost']+heuristic(succ,problem)>newCost:
-                            updateNode=nodeMap
-                if updateNode:
-                    nodeMaps.remove(updateNode)
-                    nodeMaps.append(succNode)
-                if not found:
-                    nodeMaps.append(succNode)
-    return []
+    visited=[]
+    queue=util.PriorityQueue()
+
+    queue.push((problem.getStartState(),[]), heuristic(problem.getStartState(), problem))
+
+    while not queue.isEmpty():
+        state, moves = queue.pop()
+        if state in visited:
+        	continue
+
+        if problem.isGoalState(state):
+        	return moves
+
+        visited.append(state)
+
+        for successor,action,cost in problem.getSuccessors(state):
+			if successor not in visited:
+				path = moves+[action]
+				newCost = problem.getCostOfActions(path)
+				newHn = heuristic(successor, problem)
+				queue.push((successor, moves+[action]), newCost+newHn)
+    return[]
 
 
 # Abbreviations
